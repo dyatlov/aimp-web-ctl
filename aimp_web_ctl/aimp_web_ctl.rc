@@ -47,8 +47,8 @@ END
 //
 
 1 VERSIONINFO
- FILEVERSION 1,2,5,1
- PRODUCTVERSION 1,2,5,1
+ FILEVERSION 1,2,5,3
+ PRODUCTVERSION 1,2,5,3
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -66,12 +66,12 @@ BEGIN
             VALUE "Comments", "AIMP2 player plugin for control over net"
             VALUE "CompanyName", "Dyatlov Vitaliy (diatlov@idknet.com)"
             VALUE "FileDescription", "AIMP2: Web Control"
-            VALUE "FileVersion", "1, 2, 5, 1"
+            VALUE "FileVersion", "1, 2, 5, 3"
             VALUE "InternalName", "aimp_web_ctl"
             VALUE "LegalCopyright", "Copyright (C) 2009 Dyatlov Vitaliy"
             VALUE "OriginalFilename", "aimp_web_ctl.dll"
             VALUE "ProductName", "AIMP2: Web Control"
-            VALUE "ProductVersion", "1, 2, 5, 1"
+            VALUE "ProductVersion", "1, 2, 5, 3"
         END
     END
     BLOCK "VarFileInfo"
