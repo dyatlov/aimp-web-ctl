@@ -138,6 +138,12 @@ std::wstring replaceAllW(
 
 void CResponder::ParseParams(void)
 {
+	/* Added/Fixed by Kirill Gorbunov */
+	if (buf_len == -1)
+	{
+		return;
+	}
+	/**/
 	std::string request = std::string(buffer, buf_len);	
 	boost::regex global("GET\\s([^\\?\\s]+)(\\?(\\S*))?");
 	boost::match_results<std::string::const_iterator> results;
