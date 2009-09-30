@@ -1,60 +1,73 @@
 #include "StdAfx.h"
 #include "WebController.h"
 
+extern void ShowLastError(LPTSTR lpszFunction);
+
+
 void CWebController::Answer(SOCKET ClientSocket)
 {
+	char buf[BUF_SIZE] = {0};
+	HANDLE semaphore = NULL;
 
-	char buf[4096] = {0};
-	int count = recv(ClientSocket, buf, sizeof(buf), 0);
-
-	CResponder resp(buf, count, cache.get());
-	std::string result = resp.GetResponse();
-
-	send(ClientSocket, result.c_str(), result.length(), 0);
-	closesocket(ClientSocket);
-	
+	if (semaphore = OpenSemaphore(SEMAPHORE_MODIFY_STATE, FALSE, SZ_SEMAPHORE_NAME))
 	{
-		boost::mutex::scoped_lock lock(m_mutex);
-		this->countWorkers--;
+		int count = recv(ClientSocket, buf, sizeof(buf), 0);
+
+		CResponder resp(buf, count, cache.get());
+		std::string result = resp.GetResponse();
+
+		send(ClientSocket, result.c_str(), result.length(), 0);
+		closesocket(ClientSocket);
+
+		ReleaseSemaphore(semaphore, 1, NULL);
 	}
 }
 
 void CWebController::Listen(int portNumber)
 {
-	SOCKET srv_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	srv_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (srv_sock == INVALID_SOCKET)
+	{
+		// error message
+		return;
+	}
+
 	sockaddr_in sock_addr;
 	sock_addr.sin_family = AF_INET;
 	sock_addr.sin_addr.S_un.S_addr = INADDR_ANY;
 	sock_addr.sin_port = htons(portNumber);
 
-	int result = bind(srv_sock, (sockaddr*)&sock_addr, sizeof(sock_addr));
+	if (bind(srv_sock, (sockaddr*)&sock_addr, sizeof(sock_addr)) == SOCKET_ERROR)
+	{
+		// error message
+		closesocket(srv_sock);
+		return;
+	}
 
-	listen(srv_sock, SOMAXCONN);
+	if (listen(srv_sock, SOMAXCONN) == SOCKET_ERROR)
+	{
+		// error message
+		closesocket(srv_sock);
+		return;
+	}
+
 	while(SOCKET ClientSocket = accept(srv_sock, NULL, NULL))
 	{
 		if(quit == 1)
 		{
 			closesocket(ClientSocket);
-			while(countWorkers != 0)
-				Sleep(250);
-			Sleep(250);
 			break;
-		}
-
-		{
-			boost::mutex::scoped_lock lock(m_mutex);
-			this->countWorkers++;
 		}
 
 		boost::thread(boost::bind(&CWebController::Answer, this, ClientSocket));		
 	}
+	
 	closesocket(srv_sock);
 }
 
 CWebController::CWebController(IAIMP2Controller *AIMP, int portNumber)
 {	
 	quit = 0;
-	countWorkers = 0;
 
 	this->portNumber = portNumber;
 
@@ -69,7 +82,16 @@ CWebController::CWebController(IAIMP2Controller *AIMP, int portNumber)
     }
 	else
 	{
-		mainThread.reset(new boost::thread(boost::bind(&CWebController::Listen, this, portNumber)));
+		hSemaphore = CreateSemaphore(NULL, SEMAPHORE_MAX_COUNT, SEMAPHORE_MAX_COUNT, SZ_SEMAPHORE_NAME);
+		
+		if (hSemaphore)
+		{
+			mainThread.reset(new boost::thread(boost::bind(&CWebController::Listen, this, portNumber)));
+		}
+		else
+		{
+			ShowLastError(L"CreateSemaphore");
+		}
 	}
 }
 
@@ -77,20 +99,11 @@ CWebController::~CWebController(void)
 {	
 	quit = 1;
 
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	sockaddr_in addr;	
-
-	char name[255];
-	gethostname(name, 255);	
-	hostent *h = gethostbyname(name);
-
-	addr.sin_addr.S_un.S_addr = *(u_long *)h->h_addr_list[0];
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(this->portNumber);
-	connect(sock, (sockaddr*)&addr, sizeof(addr));
-	closesocket(sock);
-
+	closesocket(srv_sock);
 	mainThread.get()->join();
+
+	WaitForSingleObject(hSemaphore, WAIT_FOR_THREADS_TIME);
+	CloseHandle(hSemaphore);
 
 	WSACleanup();
 }
