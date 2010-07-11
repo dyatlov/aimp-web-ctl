@@ -137,6 +137,8 @@ std::string AIMPCache::getCRC32(int playlistID)
 
 std::string AIMPCache::getPlaylist(int playlistID)
 {
+
+	UpdatePlaylist(playlistID);
 	std::string result;
 	
 	{
