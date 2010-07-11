@@ -1,0 +1,115 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma;
+    font-size: 13px;
+    background-color: #AEAEAE;
+}
+
+a {
+    color: #0F45A1;
+}
+
+img#repeat-file-status {
+    cursor: pointer;
+}
+
+div#top-menu {
+    position: fixed;
+    top:0;
+    left: 0;
+    width: 100%;
+}
+
+div#playlist-place {
+    margin-top: 135px;
+}
+
+div#volume-slider {
+    margin: 0 15px 0 0px;
+    width: 100px;
+}
+
+div#player-control-bar {
+    height: 35px;
+    line-height: 35px;
+    background: url('/img/player-control-bar-bnd.png')  repeat-x;
+}
+
+div#playlist-list-place {
+    height: 23px;
+    background: url('/img/playlist-header-bnd-def.png') repeat-x;
+}
+
+ul#playlist-table {
+    margin: 0;
+    padding: 0;
+    background-color: #AEAEAE;
+    width: 100%;
+    list-style: none;
+}
+
+ul#playlist-table li {
+    width: 100%;
+}
+
+ul#playlist-table li.song-current-playing {
+    background-color: #0F67A1;
+    color: white;
+}
+
+ul#playlist-table li.song-current-playing a  {
+    color: white;
+}
+
+ul#playlist-table li:hover {
+    background-color: #ABCDEF;
+}
+
+ul#playlist-table li table {
+    width: 100%;
+}
+
+ul#playlist-table li table tr td.playlist-song-name {
+    
+}
+
+ul#playlist-table li table tr td.playlist-song-delete {
+    padding-left: 5px;
+    width: 20px;
+    font-weight: bold;
+}
+
+ul#playlist-table li table tr td.playlist-song-num {
+    width: 40px;
+    font-weight: bold;
+}
+
+ul#playlist-table li table tr td.playlist-song-length {
+    width: 45px;
+}
+
+td.playlist-list-name {
+    height: 23px;
+    border-right: 1px solid #AEAEAE;
+    background: url('/img/playlist-header-bnd-def.png') repeat-x;
+}
+
+td.playlist-list-name div {
+    line-height: 23px;
+    font-family: Tahoma;
+    font-size: 11px;
+    padding: 0px 10px 0px 10px;
+}
+
+td.playlist-list-name div a {
+    text-decoration: none;
+}
+
+td.playlist-list-name.selected {
+    background: url('/img/playlist-header-bnd-sel.png') repeat-x;
+}
+
+td.playlist-list-name.playing {
+    background: url('/img/playlist-header-bnd-pla.png') repeat-x;
+}
