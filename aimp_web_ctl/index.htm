@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://gmpg.org/xfn/11">
+    <title>AIMP Web Control © Dyatlov Vitaliy</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript" src="/js/jquery.scrollTo-min.js"></script>
+    <script type="text/javascript" src="/js/ui.core.js"></script>
+    <script type="text/javascript" src="/js/ui.sortable.js"></script>
+    <script type="text/javascript" src="/js/ui.slider.js"></script>
+    <script type="text/javascript" src="/js/aimp_web_ctl_api.js"></script>
+    <script type="text/javascript" src="/js/engine.js"></script>
+    <link rel="stylesheet" href="/css/main.css" type="text/css"></link>
+    <link rel="stylesheet" href="/css/jquery-ui.css" type="text/css"></link>
+</head>
+<body>
+    <div id="top-menu">
+        <div id="player-control-bar">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td valign="middle">
+                        <img src="/img/player-control-bar-buttons.png" alt="Player control buttons" usemap="#player-buttons" border="0"/>
+                        <map name="player-buttons" id="player-buttons">
+                            <area title="Play" alt="Play" shape="circle" coords="17,18,15" href="#play" onclick="playerPlay(); return false;"/>
+                            <area title="Pause" alt="Pause" shape="circle" coords="49,18,13" href="#pause" onclick="playerPause(); return false;"/>
+                            <area title="Stop" alt="Stop" shape="circle" coords="79,18,13" href="#stop" onclick="playerStop(); return false;"/>
+                            <area title="Prevous" alt="Prevous" shape="circle" coords="109,18,13" href="#prevous" onclick="playerPrevous(); return false;"/>
+                            <area title="Next" alt="Next" shape="circle" coords="139,18,13" href="#next" onclick="playerNext(); return false;"/>
+                        </map>
+                    </td>
+                    <td valign="middle" class="pl10">
+                        <img id="repeat-file-status" src="" alt="Status of repeat file" title="" onclick="updatePlayerStatusRepeat()" />
+                    </td>
+                    <td valign="middle" class="pl10">
+                        <img id="random-file-status" src="" alt="Status of random file" title="" onclick="updatePlayerStatusRandom()" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="player-control-bar">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td valign="middle"><nobr>&nbsp;
+                        <select id="sort-type">
+                            <option value="title">Sort by title</option>
+                            <option value="filename">Sort by filename</option>
+                            <option value="duration">Sort by duration</option>
+                            <option value="artist">Sort by artist</option>
+                            <option value="inverse">Sort inverse</option>
+                            <option value="randomize">Sort randomize</option>
+                        </select>&nbsp;</nobr>
+                    </td>
+                    <td valign="middle">
+                        <img src="/img/sort.png" alt="Sort" title="Sort" class="pointer" onclick="sortPlaylist()"/>
+                    </td>
+                    <td valign="middle" class="pl10">
+                        <img src="/img/file-add.png" alt="Add file" title="Add file" class="pointer" onclick="addFile()"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="player-control-bar">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td valign="middle">
+                        <div class="volume">
+                            <img src="/img/volume.png" alt="Current volume" align="left" title="Current volume"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="volume-slider"></div>
+                    </td>
+                    <td valign="middle">
+                        <div class="playing">
+                            <img src="/img/now-playing.png" alt="Now playing" align="left" title="Now playing"/>
+                        </div>
+                    </td>
+                    <td>
+                        <nobr><span id="song-current-id"></span><a href="#" id="song-current-playing" onclick="moveToCurrentSong(); return false;"></a></nobr>
+                    </td>
+                </tr>
+            </table>
+        </div>
+		<div class="playlists">Playlists:</div>
+        <div id="playlist-list-place">
+            <!-- inside this place will be table of playlists with id 'playlist-list-table' -->
+        </div>
+    </div>
+    <div id="playlist-place">
+        <!-- inside this playlist will be table of songs with id 'playlist-table' -->
+    </div>
+</body>
+</html>

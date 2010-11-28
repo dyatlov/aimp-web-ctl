@@ -1,5 +1,5 @@
 #include "AIMP2_SDK.h"
-#include "WebController.h"
+#include "simpleserver.h"
 
 static wchar_t PLG_NAME[] = L"AIMP2: Web Control";
 static wchar_t PLG_AUTOR[] = L"Dyatlov Vitaliy";
@@ -8,7 +8,6 @@ class AIMP2WebControlHeader
 	:public IAIMPAddonHeader
 {
 private:
-	CWebController *webController;
 	LONG m_cRef;
 public:
 	AIMP2WebControlHeader()
@@ -58,16 +57,16 @@ public:
 
 	void WINAPI Finalize()
 	{
-		delete webController;
+		stop_server();
 	}
 
 	void WINAPI Initialize(IAIMP2Controller *AController)
 	{
-		webController = new CWebController(AController);
+		start_server(AController);
 	}
 
 	void WINAPI ShowSettingsDialog(HWND AParentWindow)
 	{
-		MessageBox(AParentWindow, L"AIMP2 Web Control plugin is written by Dyatlov Vitaliy.\nTo control your player over network just type in browser\nIP address of this computer and port number 38475\nExample: http://192.168.1.100:38475/, or simple http://localhost:38475/", L"Information about AIMP2 Web Control", MB_ICONINFORMATION);
+		MessageBoxW(AParentWindow, L"AIMP2 Web Control plugin is written by Vitaly Dyatlov.\nTo control your player over network just type in browser\nIP address of this computer and port number 38475\nExample: http://192.168.1.100:38475/, or simple http://localhost:38475/", L"Information about AIMP2 Web Control", MB_ICONINFORMATION);
 	}
 };

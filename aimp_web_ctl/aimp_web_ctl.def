@@ -1,4 +1,0 @@
-LIBRARY      aimp_web_ctl
-
-EXPORTS
-	AIMP_QueryAddonEx

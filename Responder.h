@@ -1,6 +1,11 @@
-#pragma once
+#ifndef RESPONDER_H
+#define RESPONDER_H
+
 #include "AIMP2_SDK.h"
-#include "AIMPCache.h"
+
+#include "MultiReaderSingleWriter.hpp"
+
+#include "CRC32.h"
 
 #include <string>
 #include <sstream>
@@ -9,16 +14,12 @@
 #include <fstream>
 #include <streambuf>
 
-struct ANSWER
-{
-	char *data;
-	int size;
-};
+static std::map<int /*playlistID*/, std::pair<unsigned int /*time*/, std::pair<int /*crc32*/, std::string /*cached playlist*/> > > PLAYLIST_CACHE;
 
 class CResponder
 {
 public:
-	CResponder(char *buffer, int len, AIMPCache *cache);
+	CResponder(IAIMP2Controller *AIMP, std::map<std::string, std::string>& params);
 	~CResponder(void);
 	std::string GetResponse(void);
 private:
@@ -31,27 +32,15 @@ private:
 	IAIMP2PlaylistManager2 *manager2;
 	IAIMP2Player *player;
 	IAIMP2Extended *extended;
-	
-	char *buffer;
-	int buf_len;
 
 	std::string pluginsPath;
 
 	std::map<std::string, std::string> requestParams;
-
-	std::string requestFile;
-
-	AIMPCache *cache;
 public:
-	std::string GetBody(void);
-	std::string GetPLTable(int playlistCurrent);
-	void ParseParams(void);
-	std::string DoInclude(void);
 	std::string DoAction(void);
 	void DoFilePlay(void);
 	std::string GetPlaylistList(void);
-	std::string GetPlaylistSongs(int playListID);
-	std::string GetPlaylistCRC(int playListID);
+	std::string GetPlaylistSongs(int playListID, bool ignoreCache, bool returnCRC);
 	std::string GetCurrentSong();
 	void PlayTrack(int playListID, int SongNum);
 	void SetNewSongPosition(int playListID, int SongNum, int position);
@@ -61,3 +50,5 @@ public:
 	void AddFile(int playlistID, std::string fileName);
 	void DeleteFile(int playlistID, int fileId);
 };
+
+#endif //RESPONDER_H

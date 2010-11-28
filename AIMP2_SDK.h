@@ -287,103 +287,103 @@ class IAIMP2Controller
 	:public IUnknown
 {
 public:	
-	virtual boolean WINAPI IsUnicodeVersion();
+	virtual boolean WINAPI IsUnicodeVersion() = 0;
 	virtual boolean WINAPI AIMP_CallBack_Set(
 		DWORD dwCBType,
 		CallBackFunc CallBackFuncPtr,
 		DWORD User
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_CallBack_Remove(
 		DWORD dwCBType,
 		int ProcPtr
-		);
+		) = 0;
 	// Status
 	virtual DWORD WINAPI AIMP_Status_Get(
 		DWORD StatusType
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_Status_Set(
 		DWORD StatusType,
 		DWORD Value
-		);
+		) = 0;
 	// Playlist
 	virtual boolean WINAPI AIMP_PLS_Clear(
 		int ID
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_PLS_Delete(
 		int ID
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_PLS_New(
 		PWCHAR Name
-		);	
+		) = 0;	
 	virtual boolean WINAPI AIMP_PLS_Info(
 		int Index,
 		PLSInfo *info
-		);
+		) = 0;
 	virtual short WINAPI AIMP_PLS_Count();
 	virtual boolean WINAPI AIMP_PLS_GetFiles(
 		int ID,
 		IPLSStrings **Strings
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_PLS_GetSelFiles(
 		int ID,
 		IPLSStrings **Strings
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_PLS_AddFiles(
 		int ID,
 		IPLSStrings *Strings
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_PLS_SetPLS(
 		int ID
-		);	
+		) = 0;	
 	// System
 	virtual boolean WINAPI AIMP_NewStrings(
 		IPLSStrings **Strings
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_GetCurrentTrack(
 		AIMP2FileInfo *AInfo
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_QueryInfo(
 		PWCHAR Filename,
 		AIMP2FileInfo *AInfo
-		);
+		) = 0;
 	virtual DWORD WINAPI AIMP_GetSystemVersion();
 	virtual boolean WINAPI AIMP_CallFunction(
 		DWORD FuncID
-		);
+		) = 0;
 	virtual int WINAPI AIMP_GetLanguage(
 		PWCHAR Str,
 		int ACount
-		);
+		) = 0;
 	virtual int WINAPI AIMP_GetCfgPath(
 		PWCHAR Str,
 		int ACount
-		);
+		) = 0;
 	virtual int WINAPI AIMP_GetSupportExts(
 		DWORD Flags,
 		PWCHAR Str,
 		int BufSize
-		);
+		) = 0;
 	// Menu
-	virtual DWORD WINAPI AIMP_GetSupportExts(
+	virtual DWORD WINAPI AIMP_Menu_CreateEx(
 		DWORD Parent,
 		AIMPMenuInfo *MenuInfo
-		);
+		) = 0;
 	virtual DWORD WINAPI AIMP_Menu_Create(
 		DWORD MenuID,
 		AIMPMenuInfo *MenuInfo
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_Menu_Update(
 		int Handle,
 		AIMPMenuInfo *MenuInfo
-		);
+		) = 0;
 	virtual boolean WINAPI AIMP_Menu_Remove(
 		int Handle
-		);
+		) = 0;
    // extention   
 	virtual boolean WINAPI AIMP_QueryObject(
 		DWORD ObjectID,
 		void *Obj
-		);
+		) = 0;
 };
 
 class IAIMPAddonHeader
@@ -594,6 +594,7 @@ public:
     virtual HRESULT WINAPI AIMP_PLS_ID_By_Index(int Index, int *ID);
     // Get Formated title for Entry
     virtual HRESULT WINAPI AIMP_PLS_Entry_GetTitle(int ID, int AEntryIndex,
+
       PWCHAR ABuffer, int ABufferSizeInChars);
     // Set Entry to playback queue
     virtual HRESULT WINAPI AIMP_PLS_Entry_QueueRemove(int ID, int AEntryIndex);
