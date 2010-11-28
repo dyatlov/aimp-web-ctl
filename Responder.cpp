@@ -168,11 +168,11 @@ std::string CResponder::GetResponse(void)
 		}
 		else if(action.compare("get_playlist_songs") == 0)
 		{
-			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), requestParams["cache"].compare("no") == 0, false);
+			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), /*requestParams["cache"].compare("no") == 0*/false, false);
 		}
 		else if(action.compare("get_playlist_crc") == 0)
 		{
-			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), requestParams["cache"].compare("no") == 0, true);
+			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), /*requestParams["cache"].compare("no") == 0*/false, true);
 		}
 		else if(action.compare("get_player_status") == 0)
 		{
@@ -198,6 +198,7 @@ std::string CResponder::GetResponse(void)
 		{
 			SetNewSongPosition(StrToInt(requestParams["playlist"]),
 				StrToInt(requestParams["song"]), StrToInt(requestParams["position"]));
+			GetPlaylistSongs(StrToInt(requestParams["playlist"]), true, true);
 		}
 		else if(action.compare("set_player_status") == 0)
 		{
@@ -229,6 +230,7 @@ std::string CResponder::GetResponse(void)
 				StrToInt(requestParams["playlist"]),
 				requestParams["sort"]
 				);
+			GetPlaylistSongs(StrToInt(requestParams["playlist"]), true, true);
 		}
 		else if(action.compare("playlist_add_file") == 0)
 		{
@@ -236,6 +238,7 @@ std::string CResponder::GetResponse(void)
 				StrToInt(requestParams["playlist"]),
 				requestParams["file"]
 				);
+			GetPlaylistSongs(StrToInt(requestParams["playlist"]), true, true);
 		}
 		else if(action.compare("playlist_del_file") == 0)
 		{
@@ -243,6 +246,7 @@ std::string CResponder::GetResponse(void)
 				StrToInt(requestParams["playlist"]),
 				StrToInt(requestParams["file"])
 				);
+			GetPlaylistSongs(StrToInt(requestParams["playlist"]), true, true);
 		}
 	}
 
