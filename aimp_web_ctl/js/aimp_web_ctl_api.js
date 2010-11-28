@@ -256,7 +256,7 @@ var AimpWebCtl = {
         
         var useCache = '';
         if(nocache == true)
-        	useCache = '&cache=false';    
+        	useCache = '&cache=no';    
         
         $.ajax({
             type: "GET",
@@ -286,7 +286,7 @@ var AimpWebCtl = {
             
         var useCache = '';
         if(nocache == true)
-        	useCache = '&cache=false';
+        	useCache = '&cache=no';
         	
         $.ajax({
             type: "GET",

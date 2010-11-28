@@ -5,7 +5,7 @@
 #include "simpleserver.h"
 
 static wchar_t PLG_NAME[] = L"AIMP2: Web Control";
-static wchar_t PLG_AUTOR[] = L"Dyatlov Vitaliy";
+static wchar_t PLG_AUTOR[] = L"Vitaly Dyatlov";
 
 class AIMP2WebControlHeader
 	:public IAIMPAddonHeader

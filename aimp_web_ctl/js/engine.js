@@ -109,7 +109,7 @@ function getCurrentSong() {
     );
 }
 
-function updatePlayListSongs(playListID, OnUpdateFunc) {
+function updatePlayListSongs(playListID, OnUpdateFunc, nocache) {
     AimpWebCtl.getPlayListSongs(playListID, function(songs) {
         if(songs == null) return;
         var playListContent = '<ul id="playlist-table">';
@@ -141,15 +141,17 @@ function updatePlayListSongs(playListID, OnUpdateFunc) {
                 AimpWebCtl.setNewSongPosition(AWC_DVY_PLAYLIST_CURRENT, source_N, dest_N)
                 updatePlayList(AWC_DVY_PLAYLIST_CURRENT);
             }
-        });
+        }, nocache);
         if(OnUpdateFunc != null)
             OnUpdateFunc();
     });
 }
 
-function updatePlayList(playListID, OnUpdateFunc) {
+function updatePlayList(playListID, OnUpdateFunc, cache) {
     if(OnUpdateFunc == null)
         OnUpdateFunc = getCurrentSong;
+        
+    var locNoCache = cache != true;
 
     AimpWebCtl.getPlayListCRC(playListID, function(crc) {
         if(crc != AWC_DVY_PLAYLIST_CRC) {
@@ -158,12 +160,9 @@ function updatePlayList(playListID, OnUpdateFunc) {
             $('#playlist'+playListID).attr('class', 'playlist-list-name selected');
 
             AWC_DVY_PLAYLIST_CURRENT = playListID;
-            if(OnUpdateFunc != null)
-                updatePlayListSongs(playListID, OnUpdateFunc);
-            else
-                updatePlayListSongs(playListID);
+            updatePlayListSongs(playListID, OnUpdateFunc, locNoCache);
         }
-    });
+    }, locNoCache);
 }
 
 function updateVolume() {
@@ -201,7 +200,9 @@ function getPlayerStatus() {
     });
 }
 
-function updatePlayListList() {
+function updatePlayListList(useCache) {
+    var locUseCache = useCache;
+
     AimpWebCtl.getPlayListList(
         function(ar) {
             if(ar == null) return;
@@ -238,7 +239,7 @@ function updatePlayListList() {
             }
 
             if(AWC_DVY_PLAYLIST_CURRENT != -1)
-                updatePlayList(AWC_DVY_PLAYLIST_CURRENT, function() { getCurrentSong(); });
+                updatePlayList(AWC_DVY_PLAYLIST_CURRENT, function() { getCurrentSong(); }, locUseCache);
         }
     );
 
@@ -261,7 +262,7 @@ $(
             changeVolume();
         }
     });
-    updatePlayListList();
-    setInterval("updatePlayListList()", 10000);
+    updatePlayListList(true);
+    setInterval("updatePlayListList(true)", 10000);
   }
 );
