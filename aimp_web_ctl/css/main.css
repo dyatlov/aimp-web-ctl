@@ -117,35 +117,36 @@ ul#playlist-table li table tr td.playlist-song-length {
     width: 45px;
 }
 
-ul#playlist-list-table {
+select#playlist-list-table {
 	margin: 0;
 	padding: 0;
 	list-style: none;
+	background: url('/img/playlist-header-bnd-def.png') repeat-x;
+	border: 0;
+	height: 23px;
+	line-height: 23px;
+	vertical-align: middle;
+	color: maroon;
+	-webkit-appearance: none;
 }
 
-li.playlist-list-name {
-    height: 23px;
-    line-height: 23px;
+option.playlist-list-name {
     overflow: hidden;
-    max-width: 150px;
-    border-right: 1px solid #AEAEAE;
-    background: url('/img/playlist-header-bnd-def.png') repeat-x;
     font-family: Tahoma;
     font-size: 11px;
-    padding: 0px 10px 0px 10px;
+    color: maroon !important;
     float: left;
+    padding: 3px 0;
+    margin: 0;
+    background-color: white;
 }
 
-td.playlist-list-name a {
-    text-decoration: none;
+option.playlist-list-name.selected {
+    background-color: #ffff00;
 }
 
-li.playlist-list-name.selected {
-    background: url('/img/playlist-header-bnd-sel.png') repeat-x;
-}
-
-li.playlist-list-name.playing {
-    background: url('/img/playlist-header-bnd-pla.png') repeat-x;
+option.playlist-list-name.playing {
+    background-color: #aadd33;
 }
 
 span#song-current-id {

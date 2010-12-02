@@ -802,7 +802,7 @@ static int pthread_cond_wait(pthread_cond_t *cv, pthread_mutex_t *mutex) {
   HANDLE handles[] = {cv->signal, cv->broadcast};
   ReleaseMutex(*mutex);
   WaitForMultipleObjects(2, handles, FALSE, INFINITE);
-  return ReleaseMutex(*mutex) == 0 ? -1 : 0;
+  return WaitForSingleObject(*mutex, INFINITE) == WAIT_OBJECT_0? 0 : -1;
 }
 
 static int pthread_cond_signal(pthread_cond_t *cv) {
@@ -3134,6 +3134,7 @@ static void send_ssi_file(struct mg_connection *conn, const char *path,
         len = 0;
       }
     }
+
   }
 
   // Send the rest of buffered data

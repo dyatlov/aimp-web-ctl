@@ -158,6 +158,7 @@ function updatePlayList(playListID, OnUpdateFunc, cache) {
             AWC_DVY_PLAYLIST_CRC = crc;
             $('.playlist-list-name.selected').attr('class', 'playlist-list-name');
             $('#playlist'+playListID).attr('class', 'playlist-list-name selected');
+            $('#playlist-list-table').val(playListID);
 
             AWC_DVY_PLAYLIST_CURRENT = playListID;
             updatePlayListSongs(playListID, OnUpdateFunc, locNoCache);
@@ -207,8 +208,7 @@ function updatePlayListList(useCache) {
         function(ar) {
             if(ar == null) return;
             var currentPlayListExist = 0;
-            var playListListContent = '<ul id="playlist-list-table" class="jcarousel-skin-tango">';
-            var percentPerItem = parseInt($('#playlist-list-place').width() / ar.length);
+            var playListListContent = '';
             for(i = 0; i < ar.length; i++) {
                 
               if((AWC_DVY_PLAYLIST_CURRENT == -1) && (i == 0))
@@ -218,19 +218,17 @@ function updatePlayListList(useCache) {
                   currentPlayListExist = 1;
 
               if(((AWC_DVY_PLAYLIST_CURRENT == -1) && (0 == i)) || (AWC_DVY_PLAYLIST_CURRENT == ar[i].id))
-                  playListListContent += '<li style="width:'+percentPerItem+'px" id="playlist'+ar[i].id+'" class="playlist-list-name selected">';
+                  playListListContent += '<option id="playlist'+ar[i].id+'" value="'+ar[i].id+'" class="playlist-list-name selected" selected="selected">';
               else
-                playListListContent += '<li style="width:'+percentPerItem+'px" id="playlist'+ar[i].id+'" class="playlist-list-name">';
+                playListListContent += '<option id="playlist'+ar[i].id+'" value="'+ar[i].id+'" class="playlist-list-name">';
 
-              playListListContent +=
-                  '<a title="'+ar[i].name.replace('"', '&quot;')+'" href="#goto" onclick="updatePlayList('+ar[i].id+');return false;">'+
-                  ar[i].name+
-                  '</a>'+
-                  '</li>';
+              playListListContent += ar[i].name + '</option>';
             }
-            playListListContent += '</ul>';
 
-            $('#playlist-list-place').html(playListListContent);
+            if(playListListContent != $('#playlist-list-table').html().replace(' playing', ''))
+            {
+	            $('#playlist-list-table').html(playListListContent);
+	    }
 
             if(currentPlayListExist == 0) {
                 if(ar.length > 0)
