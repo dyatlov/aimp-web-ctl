@@ -16,10 +16,12 @@ html, body {
 
 .playlists {
 	float: left;
-	margin: 3px 6px 0px 6px;
+	padding: 3px 6px 0px 6px;
+	height: 23px;
 	text-align: left;
 	color: #888888;
 	font-size: small;
+	background: url('/img/playlist-header-bnd-def.png') repeat-x;
 }
 
 .volume {
@@ -64,6 +66,7 @@ div#player-control-bar {
 div#playlist-list-place {
     height: 23px;
     background: url('/img/playlist-header-bnd-def.png') repeat-x;
+    overflow: hidden;
 }
 
 ul#playlist-table {
@@ -114,28 +117,34 @@ ul#playlist-table li table tr td.playlist-song-length {
     width: 45px;
 }
 
-td.playlist-list-name {
-    height: 23px;
-    border-right: 1px solid #AEAEAE;
-    background: url('/img/playlist-header-bnd-def.png') repeat-x;
+ul#playlist-list-table {
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
-td.playlist-list-name div {
+li.playlist-list-name {
+    height: 23px;
     line-height: 23px;
+    overflow: hidden;
+    max-width: 150px;
+    border-right: 1px solid #AEAEAE;
+    background: url('/img/playlist-header-bnd-def.png') repeat-x;
     font-family: Tahoma;
     font-size: 11px;
     padding: 0px 10px 0px 10px;
+    float: left;
 }
 
-td.playlist-list-name div a {
+td.playlist-list-name a {
     text-decoration: none;
 }
 
-td.playlist-list-name.selected {
+li.playlist-list-name.selected {
     background: url('/img/playlist-header-bnd-sel.png') repeat-x;
 }
 
-td.playlist-list-name.playing {
+li.playlist-list-name.playing {
     background: url('/img/playlist-header-bnd-pla.png') repeat-x;
 }
 
@@ -143,4 +152,9 @@ span#song-current-id {
  color: #0F45A1;
  margin-right: 5px;
  margin-left: 5px;
+}
+
+div.clr {
+	clear: both;
+	height: 0;
 }

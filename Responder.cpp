@@ -1,4 +1,5 @@
 #include "Responder.h"
+#include "simpleserver.h"
 
 CResponder::CResponder(IAIMP2Controller *AIMP, std::map<std::string, std::string>& params)
 {
@@ -166,6 +167,10 @@ std::string CResponder::GetResponse(void)
 		{
 			outStream << GetPlaylistList();
 		}
+		else if(action.compare("get_update_time") == 0)
+		{
+			outStream << UPDATE_TIME;
+		}
 		else if(action.compare("get_playlist_songs") == 0)
 		{
 			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), /*requestParams["cache"].compare("no") == 0*/false, false);
@@ -270,7 +275,7 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
 		concurencyInstance.EnterReader();
 		// check last time
 		it = PLAYLIST_CACHE.find(playListID);
-		if((it != PLAYLIST_CACHE.end()) && (tickCount - it->second.first < 60000) )
+		if((it != PLAYLIST_CACHE.end()) && (tickCount - it->second.first < static_cast<unsigned int>(CACHE_TIME) * 1000) )
 		{
 			cacheFound = true;
 			if(!returnCRC)

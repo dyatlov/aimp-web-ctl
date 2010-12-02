@@ -324,6 +324,19 @@ var AimpWebCtl = {
                 func(ar);
             }
           });
+    },
+    
+    getUpdateTime: function(onCompleteFunc) {
+    	var func = onCompleteFunc;
+        $.ajax({
+            type: "GET",
+            url: "/",
+            data: "action=get_update_time",
+            dataType: "text",
+            success: function(ar){
+                func(ar);
+            }
+          });
     }
 }
 

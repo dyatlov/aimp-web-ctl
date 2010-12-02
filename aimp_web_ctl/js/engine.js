@@ -207,7 +207,8 @@ function updatePlayListList(useCache) {
         function(ar) {
             if(ar == null) return;
             var currentPlayListExist = 0;
-            var playListListContent = '<table id="playlist-list-table" cellpadding="0" cellspacing="0"><tr>';
+            var playListListContent = '<ul id="playlist-list-table" class="jcarousel-skin-tango">';
+            var percentPerItem = parseInt($('#playlist-list-place').width() / ar.length);
             for(i = 0; i < ar.length; i++) {
                 
               if((AWC_DVY_PLAYLIST_CURRENT == -1) && (i == 0))
@@ -217,17 +218,17 @@ function updatePlayListList(useCache) {
                   currentPlayListExist = 1;
 
               if(((AWC_DVY_PLAYLIST_CURRENT == -1) && (0 == i)) || (AWC_DVY_PLAYLIST_CURRENT == ar[i].id))
-                  playListListContent += '<td id="playlist'+ar[i].id+'" class="playlist-list-name selected">';
+                  playListListContent += '<li style="width:'+percentPerItem+'px" id="playlist'+ar[i].id+'" class="playlist-list-name selected">';
               else
-                playListListContent += '<td id="playlist'+ar[i].id+'" class="playlist-list-name">';
+                playListListContent += '<li style="width:'+percentPerItem+'px" id="playlist'+ar[i].id+'" class="playlist-list-name">';
 
               playListListContent +=
-                  '<div><a href="#goto" onclick="updatePlayList('+ar[i].id+');return false;">'+
+                  '<a title="'+ar[i].name.replace('"', '&quot;')+'" href="#goto" onclick="updatePlayList('+ar[i].id+');return false;">'+
                   ar[i].name+
-                  '</a></div>'+
-                  '</td>';
+                  '</a>'+
+                  '</li>';
             }
-            playListListContent += '</tr>';
+            playListListContent += '</ul>';
 
             $('#playlist-list-place').html(playListListContent);
 
@@ -263,6 +264,9 @@ $(
         }
     });
     updatePlayListList(true);
-    setInterval("updatePlayListList(true)", 10000);
+    
+    AimpWebCtl.getUpdateTime(function(secs){
+    	setInterval("updatePlayListList(true)", secs * 1000);
+    });
   }
 );

@@ -1,9 +1,10 @@
-#include <string.h>
-#include <assert.h>
+#ifndef SIMPLESERVER_H
+#define SIMPLESERVER_H
 
-#include "mongoose.h"
-#include "dealer.h"
+extern int CACHE_TIME;
+extern int UPDATE_TIME;
 
 void start_server(void *inf);
 void stop_server();
 
+#endif //SIMPLESERVER_H
