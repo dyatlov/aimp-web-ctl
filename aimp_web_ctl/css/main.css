@@ -131,11 +131,9 @@ select#playlist-list-table {
 }
 
 option.playlist-list-name {
-    overflow: hidden;
     font-family: Tahoma;
     font-size: 11px;
     color: maroon !important;
-    float: left;
     padding: 3px 0;
     margin: 0;
     background-color: white;
