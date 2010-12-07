@@ -167,6 +167,14 @@ std::string CResponder::GetResponse(void)
 		{
 			outStream << GetPlaylistList();
 		}
+		else if(action.compare("get_version_string") == 0)
+		{
+			outStream << "2.6.4.1";
+		}
+		else if(action.compare("get_version_number") == 0)
+		{
+			outStream << "2641";
+		}
 		else if(action.compare("get_update_time") == 0)
 		{
 			outStream << UPDATE_TIME;

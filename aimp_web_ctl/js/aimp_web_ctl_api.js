@@ -12,6 +12,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=playlist_add_file&playlist=" + playlistID + "&file=" + filePath,
             success: function(){
                 func();
@@ -31,6 +32,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=playlist_del_file&playlist=" + playlistID + "&file=" + fileId,
             success: function(){
                 func();
@@ -47,6 +49,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=set_volume&volume=" + newVolume
           });
     },
@@ -61,6 +64,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_volume",
             dataType: "text",
             success: function(volume){
@@ -82,6 +86,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_player_status",
             dataType: "json",
             success: function(status){
@@ -98,6 +103,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=set_player_status&statusType=repeat&value=" + value,
             success: func
           });
@@ -111,6 +117,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=set_player_status&statusType=shuffle&value=" + value,
             success: func
           });
@@ -128,6 +135,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=playlist_sort&playlist=" + playlistID + "&sort=" + sortType,
             dataType: "text",
             success: func
@@ -150,6 +158,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_song_current",
             dataType: "json",
             success: function(obj){
@@ -166,6 +175,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=" + action
           });
     },
@@ -219,6 +229,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=set_song_position&playlist=" + playListID + "&song=" + songNum + "&position=" + songPos
           });
     },
@@ -235,6 +246,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=set_song_play&playlist=" + playListID + "&song=" + songNum
           });
     },
@@ -261,6 +273,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_playlist_crc&id=" + playListID + useCache,
             dataType: "text",
             success: function(crc){
@@ -291,6 +304,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_playlist_songs&id=" + playListID + useCache,
             dataType: "json",
             success: function(obj){
@@ -318,6 +332,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_playlist_list",
             dataType: "json",
             success: function(ar){
@@ -331,6 +346,7 @@ var AimpWebCtl = {
         $.ajax({
             type: "GET",
             url: "/",
+            cache: false,
             data: "action=get_update_time",
             dataType: "text",
             success: function(ar){
