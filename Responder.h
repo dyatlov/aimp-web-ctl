@@ -14,7 +14,7 @@
 #include <fstream>
 #include <streambuf>
 
-static std::map<int /*playlistID*/, std::pair<unsigned int /*time*/, std::pair<int /*crc32*/, std::string /*cached playlist*/> > > PLAYLIST_CACHE;
+static std::map<std::string /*playlist cache key*/, std::pair<unsigned int /*time*/, std::pair<int /*crc32*/, std::string /*cached playlist*/> > > PLAYLIST_CACHE;
 
 class CResponder
 {
@@ -40,7 +40,7 @@ public:
 	std::string DoAction(void);
 	void DoFilePlay(void);
 	std::string GetPlaylistList(void);
-	std::string GetPlaylistSongs(int playListID, bool ignoreCache, bool returnCRC);
+	std::string GetPlaylistSongs(int playListID, bool ignoreCache, bool returnCRC, int offset = 0, int size = 0);
 	std::string GetCurrentSong();
 	void PlayTrack(int playListID, int SongNum);
 	void SetNewSongPosition(int playListID, int SongNum, int position);

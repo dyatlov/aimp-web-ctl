@@ -181,7 +181,7 @@ std::string CResponder::GetResponse(void)
 		}
 		else if(action.compare("get_playlist_songs") == 0)
 		{
-			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), /*requestParams["cache"].compare("no") == 0*/false, false);
+			outStream << GetPlaylistSongs(StrToInt(requestParams["id"]), /*requestParams["cache"].compare("no") == 0*/false, false, StrToInt(requestParams["offset"]), StrToInt(requestParams["size"]));
 		}
 		else if(action.compare("get_playlist_crc") == 0)
 		{
@@ -266,14 +266,20 @@ std::string CResponder::GetResponse(void)
 	return outStream.str();
 }
 
-std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool returnCRC)
+std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool returnCRC, int offset, int size)
 {
 	bool cacheFound = false;
         std::stringstream answer;
+
+	std::stringstream tempkey;
+
+	tempkey << offset << "_" << size << "_" << playListID;
+
+	std::string cacheKey = tempkey.str();
         
         unsigned int tickCount = GetTickCount();
         
-        std::map<int /*playlistID*/,
+        std::map<std::string /*playlist cache key*/,
 			std::pair<unsigned int /*time*/,
 				std::pair<int /*crc32*/,
 					std::string /*cached playlist*/> > >::iterator it;
@@ -282,7 +288,7 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
 	{
 		concurencyInstance.EnterReader();
 		// check last time
-		it = PLAYLIST_CACHE.find(playListID);
+		it = PLAYLIST_CACHE.find(cacheKey);
 		if((it != PLAYLIST_CACHE.end()) && (tickCount - it->second.first < static_cast<unsigned int>(CACHE_TIME) * 1000) )
 		{
 			cacheFound = true;
@@ -302,6 +308,13 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
 
         answer << "{\"status\":";
         int fileCount = manager2->AIMP_PLS_GetFilesCount(playListID);
+
+	if(size == 0)
+		size = fileCount;
+
+	if(offset < 0)
+		offset = 0;
+
         if(fileCount < 0)
         {
                 answer << "\"ERROR\"";
@@ -313,7 +326,7 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
                 AIMP2FileInfo fileInfo;
                 memset(&fileInfo, 0, sizeof(fileInfo));
                 fileInfo.cbSizeOf = sizeof(fileInfo);
-                for(int i= 0; i < fileCount; i++)
+                for(int i= offset; (i < fileCount) && (i < offset + size); i++)
                 {
                         manager2->AIMP_PLS_Entry_GetTitle(playListID, i, const_cast<const PWCHAR>(pBuf.c_str()), pBuf.capacity());
                         manager2->AIMP_PLS_Entry_InfoGet(playListID, i, &fileInfo);
@@ -340,7 +353,7 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
         CRC32 crc;
         unsigned int hash = crc.GetHash(answer.str().c_str());
         
-        PLAYLIST_CACHE[playListID] = std::pair<int, std::pair<int, std::string> >(tickCount,
+        PLAYLIST_CACHE[cacheKey] = std::pair<int, std::pair<int, std::string> >(tickCount,
         			std::pair<int, std::string>(hash,
         			answer.str()));        
         
