@@ -28,9 +28,18 @@ extern "C" {
 struct mg_context;     // Handle for the HTTP service itself
 struct mg_connection;  // Handle for the individual connection
 
+// Parsed Authorization header
+struct mg_auth_header {
+  const char *user, *uri, *cnonce, *response, *qop, *nc, *nonce; // Fields of the Authorization header
+  // The following members can be set by MG_AUTHENTICATE callback
+  // if non-NULL, will be freed by mongoose
+  char *ha1;               // ha1 = md5(username:domain:password), used to compute expected_response
+  char *expected_response; // Compared against response
+};
 
 // This structure contains information about the HTTP request.
 struct mg_request_info {
+  void *user_data;       // User-defined pointer passed to mg_start()
   char *request_method;  // "GET", "POST", etc
   char *uri;             // URL-decoded URI
   char *http_version;    // E.g. "1.0", "1.1"
@@ -46,6 +55,7 @@ struct mg_request_info {
     char *name;          // HTTP header name
     char *value;         // HTTP header value
   } http_headers[64];    // Maximum 64 headers
+  struct mg_auth_header *ah; // Parsed Authorization header, if present
 };
 
 // Various events on which user-defined function is called by Mongoose.
@@ -55,6 +65,8 @@ enum mg_event {
   MG_EVENT_LOG,     // Mongoose logs an event, request_info.log_message
   MG_INIT_SSL,      // Mongoose initializes SSL. Instead of mg_connection *,
                     // SSL context is passed to the callback function.
+  MG_AUTHENTICATE,  // Authenticate a new HTTP request.  request_info->ah
+                    // is set, if available.  Callback should fill in request_info->ha1.
 };
 
 // Prototype for the user-defined function. Mongoose calls this function
@@ -76,7 +88,7 @@ enum mg_event {
 typedef void * (*mg_callback_t)(enum mg_event event,
                                 struct mg_connection *conn,
                                 const struct mg_request_info *request_info);
-  
+
 
 // Start web server.
 //
@@ -98,7 +110,8 @@ typedef void * (*mg_callback_t)(enum mg_event event,
 //
 // Return:
 //   web server context, or NULL on error.
-struct mg_context *mg_start(mg_callback_t callback, const char **options);
+struct mg_context *mg_start(mg_callback_t callback, void *user_data,
+                            const char **options);
 
 
 // Stop the web server.
@@ -155,6 +168,13 @@ int mg_printf(struct mg_connection *, const char *fmt, ...);
 // Read data from the remote end, return number of bytes read.
 int mg_read(struct mg_connection *, void *buf, size_t len);
 
+// Send a 401 Unauthorized response to the browser.
+//
+// This triggers a username/password entry in the browser.  The realm
+// in the request is set to the AUTHENTICATION_DOMAIN option.
+// If nonce is non-NULL, it is sent as the nonce of the authentication
+// request, else a nonce is generated.
+void mg_send_authorization_request(struct mg_connection *conn, const char *nonce);
 
 // Get the value of particular HTTP header.
 //

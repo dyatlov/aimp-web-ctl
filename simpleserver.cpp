@@ -100,12 +100,12 @@ void start_server(void *inf)
 	};
 
 	pAimpInterface = inf;
-	ctx = mg_start(&event_handler, options);
+	ctx = mg_start(&event_handler, NULL, options);
 	
 	while(ctx == NULL)
 	{
 		Sleep(1000);
-		ctx = mg_start(&event_handler, options);
+		ctx = mg_start(&event_handler, NULL, options);
 		if(MessageBoxA(0, "Port is busy, try again?\r\nMake sure that all AIMP Web Control web-pages are closed and port is free", "AIMP Web Control: Error", MB_RETRYCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON1 | MB_TOPMOST) != IDRETRY)
 		{
 			MessageBoxA(0, "To enable server you should restart AIMP", "AIMP Web Control: Information", MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
