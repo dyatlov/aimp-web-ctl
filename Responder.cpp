@@ -169,11 +169,11 @@ std::string CResponder::GetResponse(void)
 		}
 		else if(action.compare("get_version_string") == 0)
 		{
-			outStream << "2.6.4.1";
+			outStream << "2.6.4.3";
 		}
 		else if(action.compare("get_version_number") == 0)
 		{
-			outStream << "2641";
+			outStream << "2643";
 		}
 		else if(action.compare("get_update_time") == 0)
 		{
@@ -202,6 +202,26 @@ std::string CResponder::GetResponse(void)
 		else if(action.compare("set_volume") == 0)
 		{
 			outStream << ctrl->AIMP_Status_Set(AIMP_STS_VOLUME, StrToInt(requestParams["volume"]));
+		}
+		else if(action.compare("get_track_position") == 0)
+		{
+			outStream << "{\"position\":\"" << ctrl->AIMP_Status_Get(AIMP_STS_POS) << "\",\"length\":\"" << ctrl->AIMP_Status_Get(AIMP_STS_LENGTH) << "\"}";
+		}
+		else if(action.compare("set_track_position") == 0)
+		{
+			outStream << ctrl->AIMP_Status_Set(AIMP_STS_POS, StrToInt(requestParams["position"]));
+		}
+		else if(action.compare("get_track_length") == 0)
+		{
+			outStream << ctrl->AIMP_Status_Get(AIMP_STS_LENGTH);
+		}
+		else if(action.compare("get_custom_status") == 0)
+		{
+			outStream << ctrl->AIMP_Status_Get(StrToInt(requestParams["status"]));
+		}
+		else if(action.compare("set_custom_status") == 0)
+		{
+			outStream << ctrl->AIMP_Status_Set(StrToInt(requestParams["status"]), StrToInt(requestParams["value"]));
 		}
 		else if(action.compare("set_song_play") == 0)
 		{
@@ -412,6 +432,8 @@ std::string CResponder::GetCurrentSong()
 	answer << playing_file;
 	answer << "\", \"PlayingFileName\": \"";
 	answer << ToUtf8(pBuf);
+	answer << "\", \"length\": \"";
+	answer << ctrl->AIMP_Status_Get(AIMP_STS_LENGTH);
 	answer << "\"}";
 	return answer.str();
 }
