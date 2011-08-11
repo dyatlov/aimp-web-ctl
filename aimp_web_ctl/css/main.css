@@ -98,8 +98,11 @@ ul#playlist-table li table {
     width: 100%;
 }
 
+ul#playlist-table li table tr td.playlist-song-queue {
+	width: 40px;
+}
+
 ul#playlist-table li table tr td.playlist-song-name {
-    
 }
 
 ul#playlist-table li table tr td.playlist-song-delete {

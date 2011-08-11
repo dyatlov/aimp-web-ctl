@@ -117,8 +117,11 @@ function updatePlayListSongs(playListID, OnUpdateFunc, nocache) {
           playListContent += '<li id="playlist-table_'+i+'"><table cellpadding="0" cellspacing="0"><tr>'
               +'<td class="playlist-song-delete"><a href="#delete" onclick="delFile('+i+');return false;">X</a></td>'
               +'<td class="playlist-song-num">'
-              +(i+1)+'</td><td class="playlist-song-name">'+
-              '<a name="song'+i+'"></a><a href="#play" onclick="playSound('+playListID+','+i+');return false;">'+
+              +(i+1)+'</td><td class="playlist-song-queue">'
+			  +'<a title="Add to queue" href="#queue" onclick="AimpWebCtl.queueSound('+playListID+','+i+');return false;">[+]</a>'
+			  +'<a title="Remove from queue" href="#unqueue" onclick="AimpWebCtl.unqueueSound('+playListID+','+i+');return false;">[-]</a>'
+			  +'</td><td class="playlist-song-name">'
+              +'<a name="song'+i+'"></a><a href="#play" onclick="playSound('+playListID+','+i+');return false;">'+
               songs[i].name+
               '</a>'+
               '</td><td class="playlist-song-length">'+niceTime(songs[i].length)+

@@ -141,6 +141,44 @@ var AimpWebCtl = {
             success: func
           });
     },
+	
+	/**
+     * Add song to queue
+     *
+     * Object fields:
+     *   playlistID - playing list id
+     *   songID - playing file number
+     *
+     * @return none
+     */
+    queueSound: function(playlistID, songID) {
+        $.ajax({
+            type: "GET",
+            url: "/",
+            cache: false,
+            data: "action=playlist_queue_add&playlist=" + playlistID + "&song=" + songID,
+            dataType: "json"
+          });
+    },
+	
+	/**
+     * Remove song from queue
+     *
+     * Object fields:
+     *   playlistID - playing list id
+     *   songID - playing file number
+     *
+     * @return none
+     */
+    unqueueSound: function(playlistID, songID) {
+        $.ajax({
+            type: "GET",
+            url: "/",
+            cache: false,
+            data: "action=playlist_queue_remove&playlist=" + playlistID + "&song=" + songID,
+            dataType: "json"
+          });
+    },
 
     /**
      * Get current playing playlist id, playing song number and song name

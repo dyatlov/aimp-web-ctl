@@ -265,6 +265,21 @@ std::string CResponder::GetResponse(void)
 				);
 			GetPlaylistSongs(StrToInt(requestParams["playlist"]), true, true);
 		}
+		else if(action.compare("playlist_queue_add") == 0)
+		{
+			manager2->AIMP_PLS_Entry_QueueSet(
+				StrToInt(requestParams["playlist"]),
+				StrToInt(requestParams["song"]),
+				false
+				);
+		}
+		else if(action.compare("playlist_queue_remove") == 0)
+		{
+			manager2->AIMP_PLS_Entry_QueueRemove(
+				StrToInt(requestParams["playlist"]),
+				StrToInt(requestParams["song"])
+				);
+		}
 		else if(action.compare("playlist_add_file") == 0)
 		{
 			AddFile(
