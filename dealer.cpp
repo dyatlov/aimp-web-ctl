@@ -1,7 +1,7 @@
 #include "dealer.h"
 #include "Responder.h"
 
-void get_response(void *pInterface, std::string& response, char *query_string)
+RESPONSE_TYPE get_response(void *pInterface, std::string& response, char *query_string)
 {
 	std::string str(query_string);
 	
@@ -11,6 +11,8 @@ void get_response(void *pInterface, std::string& response, char *query_string)
 	CResponder responder(reinterpret_cast<IAIMP2Controller *>(pInterface), params);
 	
 	response = responder.GetResponse();
+
+	return responder.GetResponseType();
 }
 
 void parse_params(std::string& str, std::map<std::string, std::string>& params)

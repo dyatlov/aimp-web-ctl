@@ -14,6 +14,8 @@
 #include <fstream>
 #include <streambuf>
 
+enum RESPONSE_TYPE{RESPONSE_NORMAL, RESPONSE_FILENAME};
+
 static std::map<std::string /*playlist cache key*/, std::pair<unsigned int /*time*/, std::pair<int /*crc32*/, std::string /*cached playlist*/> > > PLAYLIST_CACHE;
 
 class CResponder
@@ -36,12 +38,15 @@ private:
 	std::string pluginsPath;
 
 	std::map<std::string, std::string> requestParams;
+
+	RESPONSE_TYPE response_type;
 public:
 	std::string DoAction(void);
 	void DoFilePlay(void);
 	std::string GetPlaylistList(void);
 	std::string GetPlaylistSongs(int playListID, bool ignoreCache, bool returnCRC, int offset = 0, int size = 0);
 	std::string GetCurrentSong();
+	std::string DownloadSong(int playListID, int SongNum);
 	void PlayTrack(int playListID, int SongNum);
 	void SetNewSongPosition(int playListID, int SongNum, int position);
 	void SortPlaylist(int playlistID, std::string sortType);
@@ -49,6 +54,7 @@ public:
 	void SetPlayerStatus(std::string statusType, int value);
 	void AddFile(int playlistID, std::string fileName);
 	void DeleteFile(int playlistID, int fileId);
+	RESPONSE_TYPE GetResponseType();
 };
 
 #endif //RESPONDER_H

@@ -18,10 +18,17 @@ CResponder::CResponder(IAIMP2Controller *AIMP, std::map<std::string, std::string
         this->pluginsPath = ToUtf8(std::wstring(buffer, result));
 
 	requestParams = params;
+
+	this->response_type = RESPONSE_NORMAL;
 }
 
 CResponder::~CResponder(void)
 {
+}
+
+RESPONSE_TYPE CResponder::GetResponseType()
+{
+	return this->response_type;
 }
 
 std::wstring CResponder::FromLocale(const std::string& mbstring)
@@ -169,11 +176,11 @@ std::string CResponder::GetResponse(void)
 		}
 		else if(action.compare("get_version_string") == 0)
 		{
-			outStream << "2.6.4.3";
+			outStream << "2.6.5.0";
 		}
 		else if(action.compare("get_version_number") == 0)
 		{
-			outStream << "2643";
+			outStream << "2650";
 		}
 		else if(action.compare("get_update_time") == 0)
 		{
@@ -222,6 +229,10 @@ std::string CResponder::GetResponse(void)
 		else if(action.compare("set_custom_status") == 0)
 		{
 			outStream << ctrl->AIMP_Status_Set(StrToInt(requestParams["status"]), StrToInt(requestParams["value"]));
+		}
+		else if(action.compare("download_song") == 0)
+		{
+			outStream << DownloadSong(StrToInt(requestParams["playlist"]), StrToInt(requestParams["song"]));
 		}
 		else if(action.compare("set_song_play") == 0)
 		{
@@ -350,32 +361,33 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
 	if(offset < 0)
 		offset = 0;
 
-        if(fileCount < 0)
-        {
-                answer << "\"ERROR\"";
-        }
-        else
-        {
-                answer << "\"OK\",\"songs\":[";
-                std::wstring pBuf(256, 0);
-                AIMP2FileInfo fileInfo;
-                memset(&fileInfo, 0, sizeof(fileInfo));
-                fileInfo.cbSizeOf = sizeof(fileInfo);
-                for(int i= offset; (i < fileCount) && (i < offset + size); i++)
-                {
-                        manager2->AIMP_PLS_Entry_GetTitle(playListID, i, const_cast<const PWCHAR>(pBuf.c_str()), pBuf.capacity());
-                        manager2->AIMP_PLS_Entry_InfoGet(playListID, i, &fileInfo);
-                        pBuf = replaceAllW(pBuf, L"\"", L"\\\"");
-                        answer << "{\"name\":\"" << ToUtf8(pBuf) << "\",\"length\":\"" << fileInfo.nDuration << "\"},";
-                }
-                if(fileCount > 0)
-                        answer.seekp((int)(answer.tellp()) - 1);
-                answer << "]";
-        }
-        answer << "}";
+    if(fileCount < 0)
+    {
+            answer << "\"ERROR\"";
+    }
+    else
+    {
+            answer << "\"OK\",\"songs\":[";
+            std::wstring pBuf(256, 0);
+            AIMP2FileInfo fileInfo;
+            memset(&fileInfo, 0, sizeof(fileInfo));
+            fileInfo.cbSizeOf = sizeof(fileInfo);				
+            for(int i= offset; (i < fileCount) && (i < offset + size); i++)
+            {
+                    manager2->AIMP_PLS_Entry_GetTitle(playListID, i, const_cast<const PWCHAR>(pBuf.c_str()), pBuf.capacity());
+                    manager2->AIMP_PLS_Entry_InfoGet(playListID, i, &fileInfo);
+                    pBuf = replaceAllW(pBuf, L"\"", L"\\\"");
+                    answer << "{\"name\":\"" << ToUtf8(pBuf) << "\",\"length\":\"" << fileInfo.nDuration << "\"" << "},";
+            }
+			delete[] fileInfo.sFileName;
+            if(fileCount > 0)
+                    answer.seekp((int)(answer.tellp()) - 1);
+            answer << "]";
+    }
+    answer << "}";
         
-        //removing old cache
-        for (it=PLAYLIST_CACHE.begin(); it != PLAYLIST_CACHE.end();)
+    //removing old cache
+    for (it=PLAYLIST_CACHE.begin(); it != PLAYLIST_CACHE.end();)
 	{
 		if(tickCount - it->second.first > 60000 * 60) //delete playlists which where accessed last time hour or more ago
 		{
@@ -385,22 +397,22 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
 			++it;
 	}
         
-        CRC32 crc;
-        unsigned int hash = crc.GetHash(answer.str().c_str());
+    CRC32 crc;
+    unsigned int hash = crc.GetHash(answer.str().c_str());
         
-        PLAYLIST_CACHE[cacheKey] = std::pair<int, std::pair<int, std::string> >(tickCount,
-        			std::pair<int, std::string>(hash,
-        			answer.str()));        
+    PLAYLIST_CACHE[cacheKey] = std::pair<int, std::pair<int, std::string> >(tickCount,
+        		std::pair<int, std::string>(hash,
+        		answer.str()));        
         
-        if(returnCRC)
-        {
-        	answer.str(std::string());
-        	answer << hash;
-        }
+    if(returnCRC)
+    {
+        answer.str(std::string());
+        answer << hash;
+    }
         
-        concurencyInstance.LeaveWriter();
+    concurencyInstance.LeaveWriter();
         
-        return answer.str();
+    return answer.str();
 }
 
 std::string CResponder::GetPlaylistList()
@@ -423,6 +435,25 @@ std::string CResponder::GetPlaylistList()
 		answer.seekp((int)(answer.tellp()) - 1);
 	answer << "]";
 	return answer.str();
+}
+
+std::string CResponder::DownloadSong(int playListID, int SongNum)
+{
+	AIMP2FileInfo fileInfo;
+    memset(&fileInfo, 0, sizeof(fileInfo));
+    fileInfo.cbSizeOf = sizeof(fileInfo);
+	fileInfo.nFileNameLen = 1024;
+	fileInfo.sFileName = new WCHAR[1024];
+
+	manager2->AIMP_PLS_Entry_InfoGet(playListID, SongNum, &fileInfo);
+
+	this->response_type = RESPONSE_FILENAME;
+
+	std::string str(ToUtf8(fileInfo.sFileName));
+
+	delete[] fileInfo.sFileName;
+
+	return str;
 }
 
 void CResponder::PlayTrack(int playListID, int SongNum)

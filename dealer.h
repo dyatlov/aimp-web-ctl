@@ -9,8 +9,9 @@
 #include <streambuf>
 
 #include "AIMP2_SDK.h"
+#include "Responder.h"
 
-void get_response(void *pInterface, std::string& response, char *query_string);
+RESPONSE_TYPE get_response(void *pInterface, std::string& response, char *query_string);
 
 void parse_params(std::string& str, std::map<std::string, std::string>& params);
 

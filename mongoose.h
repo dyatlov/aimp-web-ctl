@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Sergey Lyubka
+// Copyright (c) 2004-2011 Sergey Lyubka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,8 @@
 #ifndef MONGOOSE_HEADER_INCLUDED
 #define  MONGOOSE_HEADER_INCLUDED
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -28,14 +30,6 @@ extern "C" {
 struct mg_context;     // Handle for the HTTP service itself
 struct mg_connection;  // Handle for the individual connection
 
-// Parsed Authorization header
-struct mg_auth_header {
-  const char *user, *uri, *cnonce, *response, *qop, *nc, *nonce; // Fields of the Authorization header
-  // The following members can be set by MG_AUTHENTICATE callback
-  // if non-NULL, will be freed by mongoose
-  char *ha1;               // ha1 = md5(username:domain:password), used to compute expected_response
-  char *expected_response; // Compared against response
-};
 
 // This structure contains information about the HTTP request.
 struct mg_request_info {
@@ -43,19 +37,18 @@ struct mg_request_info {
   char *request_method;  // "GET", "POST", etc
   char *uri;             // URL-decoded URI
   char *http_version;    // E.g. "1.0", "1.1"
-  char *query_string;    // \0 - terminated
-  char *remote_user;     // Authenticated user
-  char *log_message;     // Mongoose error log message
+  char *query_string;    // URL part after '?' (not including '?') or NULL
+  char *remote_user;     // Authenticated user, or NULL if no auth used
+  char *log_message;     // Mongoose error log message, MG_EVENT_LOG only
   long remote_ip;        // Client's IP address
   int remote_port;       // Client's port
-  int status_code;       // HTTP reply status code
+  int status_code;       // HTTP reply status code, e.g. 200
   int is_ssl;            // 1 if SSL-ed, 0 if not
   int num_headers;       // Number of headers
   struct mg_header {
     char *name;          // HTTP header name
     char *value;         // HTTP header value
   } http_headers[64];    // Maximum 64 headers
-  struct mg_auth_header *ah; // Parsed Authorization header, if present
 };
 
 // Various events on which user-defined function is called by Mongoose.
@@ -63,26 +56,24 @@ enum mg_event {
   MG_NEW_REQUEST,   // New HTTP request has arrived from the client
   MG_HTTP_ERROR,    // HTTP error must be returned to the client
   MG_EVENT_LOG,     // Mongoose logs an event, request_info.log_message
-  MG_INIT_SSL,      // Mongoose initializes SSL. Instead of mg_connection *,
+  MG_INIT_SSL       // Mongoose initializes SSL. Instead of mg_connection *,
                     // SSL context is passed to the callback function.
-  MG_AUTHENTICATE,  // Authenticate a new HTTP request.  request_info->ah
-                    // is set, if available.  Callback should fill in request_info->ha1.
 };
 
 // Prototype for the user-defined function. Mongoose calls this function
-// on every event mentioned above.
+// on every MG_* event.
 //
 // Parameters:
 //   event: which event has been triggered.
 //   conn: opaque connection handler. Could be used to read, write data to the
-//         client, etc. See functions below that accept "mg_connection *".
+//         client, etc. See functions below that have "mg_connection *" arg.
 //   request_info: Information about HTTP request.
 //
 // Return:
 //   If handler returns non-NULL, that means that handler has processed the
 //   request by sending appropriate HTTP reply to the client. Mongoose treats
 //   the request as served.
-//   If callback returns NULL, that means that callback has not processed
+//   If handler returns NULL, that means that handler has not processed
 //   the request. Handler must not send any data to the client in this case.
 //   Mongoose proceeds with request handling as if nothing happened.
 typedef void * (*mg_callback_t)(enum mg_event event,
@@ -97,13 +88,18 @@ typedef void * (*mg_callback_t)(enum mg_event event,
 //   options: NULL terminated list of option_name, option_value pairs that
 //            specify Mongoose configuration parameters.
 //
+// Side-effects: on UNIX, ignores SIGCHLD and SIGPIPE signals. If custom
+//    processing is required for these, signal handlers must be set up
+//    after calling mg_start().
+//
+//
 // Example:
 //   const char *options[] = {
 //     "document_root", "/var/www",
 //     "listening_ports", "80,443s",
 //     NULL
 //   };
-//   struct mg_context *ctx = mg_start(&my_func, options);
+//   struct mg_context *ctx = mg_start(&my_func, NULL, options);
 //
 // Please refer to http://code.google.com/p/mongoose/wiki/MongooseManual
 // for the list of valid option and their possible values.
@@ -149,8 +145,10 @@ const char **mg_get_valid_option_names(void);
 //
 // Return:
 //   1 on success, 0 on error.
-int mg_modify_passwords_file(struct mg_context *ctx, 
-    const char *passwords_file_name, const char *user, const char *password);
+int mg_modify_passwords_file(const char *passwords_file_name,
+                             const char *domain,
+                             const char *user,
+                             const char *password);
 
 // Send data to the client.
 int mg_write(struct mg_connection *, const void *buf, size_t len);
@@ -165,16 +163,13 @@ int mg_write(struct mg_connection *, const void *buf, size_t len);
 int mg_printf(struct mg_connection *, const char *fmt, ...);
 
 
+// Send contents of the entire file together with HTTP headers.
+void mg_send_file(struct mg_connection *conn, const char *path);
+
+
 // Read data from the remote end, return number of bytes read.
 int mg_read(struct mg_connection *, void *buf, size_t len);
 
-// Send a 401 Unauthorized response to the browser.
-//
-// This triggers a username/password entry in the browser.  The realm
-// in the request is set to the AUTHENTICATION_DOMAIN option.
-// If nonce is non-NULL, it is sent as the nonce of the authentication
-// request, else a nonce is generated.
-void mg_send_authorization_request(struct mg_connection *conn, const char *nonce);
 
 // Get the value of particular HTTP header.
 //
@@ -201,7 +196,7 @@ const char *mg_get_header(const struct mg_connection *, const char *name);
 // Destination buffer is guaranteed to be '\0' - terminated. In case of
 // failure, dst[0] == '\0'.
 int mg_get_var(const char *data, size_t data_len,
-    const char *var_name, char *buf, size_t buf_len);
+               const char *var_name, char *buf, size_t buf_len);
 
 // Fetch value of certain cookie variable into the destination buffer.
 //
@@ -211,11 +206,11 @@ int mg_get_var(const char *data, size_t data_len,
 //
 // Return:
 //   On success, value length.
-//   On error, -1 (either "Cookie:" header is not present at all, or the
+//   On error, 0 (either "Cookie:" header is not present at all, or the
 //   requested parameter is not found, or destination buffer is too small
 //   to hold the value).
 int mg_get_cookie(const struct mg_connection *,
-    const char *cookie_name, char *buf, size_t buf_len);
+                  const char *cookie_name, char *buf, size_t buf_len);
 
 
 // Return Mongoose version.

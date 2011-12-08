@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <shlwapi.h>
 
+#include "Responder.h"
 #include "mongoose.h"
 #include "dealer.h"
 #include "simpleserver.h"
@@ -32,11 +33,18 @@ static void *event_handler(enum mg_event event,
 	if (event == MG_NEW_REQUEST)
 	{
 		if(request_info->query_string != NULL)
-		{
-			mg_printf(conn, "%s", ajax_reply);
+		{			
 			std::string response;
-			get_response(pAimpInterface, response, request_info->query_string);
-			mg_write(conn, response.c_str(), response.size() * sizeof(char));
+
+			if (get_response(pAimpInterface, response, request_info->query_string) == RESPONSE_FILENAME)
+			{
+				mg_send_file(conn, response.c_str());
+			}
+			else
+			{
+				mg_printf(conn, "%s", ajax_reply);
+				mg_write(conn, response.c_str(), response.size() * sizeof(char));
+			}
 		}
 		else
 		{
