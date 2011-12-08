@@ -379,7 +379,6 @@ std::string CResponder::GetPlaylistSongs(int playListID, bool ignoreCache, bool 
                     pBuf = replaceAllW(pBuf, L"\"", L"\\\"");
                     answer << "{\"name\":\"" << ToUtf8(pBuf) << "\",\"length\":\"" << fileInfo.nDuration << "\"" << "},";
             }
-			delete[] fileInfo.sFileName;
             if(fileCount > 0)
                     answer.seekp((int)(answer.tellp()) - 1);
             answer << "]";
