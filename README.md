@@ -37,7 +37,7 @@ ea91ff01a238d84ffac5f0e709b2c393 - md5 from string 'vit:mydomain.com:123456', wh
 API Documentation
 -----------------
 
-http://code.google.com/p/aimp-web-ctl/downloads/detail?name=AIMPWebControlRemoteAPI.pdf&can=2
+https://github.com/dyatlov/aimp-web-ctl/raw/master/AIMPWebControlRemoteAPIv1.1.pdf
 
 Projects using AIMP Web Control
 -------------------------------
