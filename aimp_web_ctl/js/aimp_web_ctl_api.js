@@ -391,6 +391,78 @@ var AimpWebCtl = {
                 func(ar);
             }
           });
+    },
+
+    /**
+     * Set current position at track (seconds)
+     * @param pos
+     * @param onCompleteFunc
+     */
+    setTrackPosition: function(pos,onCompleteFunc) {
+        var func = onCompleteFunc;
+        $.ajax({
+            type: "GET",
+            url: "/",
+            cache: false,
+            dataType: "json",
+            data: "action=set_track_position&position=" + pos
+        });
+    },
+
+    /**
+     * Return current position at track (seconds)
+     * @param onCompleteFunc
+     */
+    getTrackPosition: function(onCompleteFunc) {
+        var func = onCompleteFunc;
+        $.ajax({
+            type: "GET",
+            url: "/",
+            cache: false,
+            data: "action=get_track_position",
+            dataType: "json",
+            success: function(ar){
+                func(ar);
+            }
+        });
+    },
+
+    /**
+     * Return additional status, used for debug
+     * @param index
+     * @param onCompleteFunc
+     */
+    getCustomStatus: function(index,onCompleteFunc) {
+        var func = onCompleteFunc;
+        $.ajax({
+            type: "GET",
+            url: "/",
+            cache: false,
+            dataType: "text",
+            data: "action=get_custom_status&status="+index,
+            success: function(ar){
+                func(ar);
+            }
+        });
+    },
+
+    /**
+     * Return current track status: playing/stopped/paused
+     * @param onCompleteFunc
+     */
+    getTrackStatus: function(onCompleteFunc) {
+        var func = onCompleteFunc;
+        $.ajax({
+            type: "GET",
+            url: "/",
+            cache: false,
+            dataType: "text",
+            data: "action=get_custom_status&status=4",
+            success: function(ar){
+                func(ar);
+            }
+        });
     }
+
 }
 
