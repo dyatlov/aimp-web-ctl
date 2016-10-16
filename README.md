@@ -74,13 +74,14 @@ Contact with author
 -----------------------------
   Adaptive Web Design for Desktop & Mobile
  
-  [bootstrap]: http://getbootstrap.com
-  [bootstrap-slider]: https://github.com/seiyria/bootstrap-slider
-  
   Added functions:
   - setTrackPosition
   - getTrackPosition
   - getCustomStatus
   - getTrackStatus 
   
-  [email]: mailto:ekilei@gmail.com 
+  * [ekimail][]
+  
+  [bootstrap]: http://getbootstrap.com
+  [bootstrap-slider]: https://github.com/seiyria/bootstrap-slider
+  [ekimail]: mailto:ekilei@gmail.com 
