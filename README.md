@@ -80,8 +80,10 @@ Contact with author
   - getCustomStatus
   - getTrackStatus 
   
-  * [ekimail][]
+Contact with Ekilei
+  
+  * [ekilei][]
   
   [bootstrap]: http://getbootstrap.com
   [bootstrap-slider]: https://github.com/seiyria/bootstrap-slider
-  [ekimail]: mailto:ekilei@gmail.com 
+  [ekilei]: mailto:ekilei@gmail.com
