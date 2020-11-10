@@ -97,16 +97,23 @@ function statusBar(index) {
     }
 
     $('#statusBar').removeClass().addClass('alert');
+    $('#statusIcon').removeClass().addClass('glyphicon');
     switch(index)
     {
         case 0 :
-            $('#statusBar').addClass('alert-info').find('strong').html('Остановлен'); // stopped
+            $('#statusBar').addClass('alert-info');
+            $('#statusIcon').addClass('glyphicon-pause');
+            // stopped
             break;
         case 1 :
-            $('#statusBar').addClass('alert-success').find('strong').html('Проигрывается'); //playing
+            $('#statusBar').addClass('alert-success');
+            $('#statusIcon').addClass('glyphicon-play');
+            //playing
             break;
         case 2 :
-            $('#statusBar').addClass('alert-warning').find('strong').html('На паузе'); // paused
+            $('#statusBar').addClass('alert-warning');
+            $('#statusIcon').addClass('glyphicon-pause');
+            // paused
             break;
     }
 
