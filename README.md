@@ -68,3 +68,22 @@ Contact with author
   [Facebook]: http://www.facebook.com/profile.php?id=100000497200312
   [https://plus.google.com/11134]: https://plus.google.com/11134
   [twitter]: http://twitter.com/#!/xytop
+  
+========================================================================
+2016-10-16 Modified by Ekilei
+-----------------------------
+  Adaptive Web Design for Desktop & Mobile
+ 
+  Added functions:
+  - setTrackPosition
+  - getTrackPosition
+  - getCustomStatus
+  - getTrackStatus 
+  
+Contact with Ekilei
+  
+  * [ekilei][]
+  
+  [bootstrap]: http://getbootstrap.com
+  [bootstrap-slider]: https://github.com/seiyria/bootstrap-slider
+  [ekilei]: mailto:ekilei@gmail.com
